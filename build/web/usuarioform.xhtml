@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    
+    <ui:composition template="/templates/basetemplate.xhtml">
+        <ui:define name="title">
+             <h:outputText value="Usuario"/>
+        </ui:define>
+        
+        <ui:define name="content">
+            
+            <h:form>
+                <!--<h2 class="titulo_centrado">Datos del usuario</h2>-->
+                <p:panelGrid columns="1" styleClass="panel_grid_center02">
+                    <f:facet name="header">
+                        <h:panelGroup style="display:block; text-align:center">
+                            <p:outputLabel value="DATOS DEL USUARIO"/>
+                        </h:panelGroup>
+                    </f:facet>
+                    
+                    <!--<p:outputLabel for="name" value="Nombre:"/>-->
+                    <p:row>
+                        <p:column><p:inputText id="name" value="#{funcionarioMB.funcionario.nombre}" required="true" size="21"/></p:column>
+                        <p:watermark for="name" value="Nombre"/>
+                        <p:column><p:spacer width="44" height="10" /></p:column>
+                        <p:column><p:inputText id="lastname" value="#{funcionarioMB.funcionario.apellido}" required="true" size="21"/></p:column>
+                        <p:watermark for="lastname" value="Apellido"/>
+                    </p:row>
+                    
+                    <!--<p:outputLabel for="post" value="Cargo:"/>-->
+                    <p:inputText id="post" value="#{funcionarioMB.funcionario.cargo}" required="true" size="50"/>
+                    <p:watermark for="post" value="Cargo"/>
+                    
+                   <!-- <p:outputLabel for="email" value="Correo electrónico:"/>-->
+                    <p:inputText id="email" value="#{funcionarioMB.funcionario.email}" required="true" size="50" label="Email" validatorMessage="El correo ingresado no es valido">
+                        <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$"/>
+                    </p:inputText>
+                   <p:watermark for="email" value="Correo electronico"/>
+                    
+                    <!--<p:outputLabel for="username" value="Nombre de usuario:"/>-->
+                    <p:inputText id="username" value="#{funcionarioMB.funcionario.userName}" required="true" size="50" readonly="#{funcionarioMB.edit}"/>
+                    <p:watermark for="username" value="Nombre de usuario"/>
+                    
+                    <!--<p:outputLabel for="pwd1" value="Clave:"/>-->
+                    <p:password id="pwd1" value="#{funcionarioMB.funcionario.userPassword}" match="pwd2" required="true" size="50" label="Clave 1" 
+                                validatorMessage="Las claves no coinciden" requiredMessage="Debe ingresar una clave"
+                                rendered="#{!funcionarioMB.edit}"/>
+                    <p:watermark for="pwd1" value="Ingresar clave" rendered="#{!funcionarioMB.edit}"/>
+                    
+                    <!--<p:outputLabel for="pwd2" value="Confirmar clave:"/>-->
+                    <p:password id="pwd2" value="#{funcionarioMB.funcionario.userPassword}" size="50" label="Clave 2" rendered="#{!funcionarioMB.edit}"/>
+                    <p:watermark for="pwd2" value="Confirmar clave" rendered="#{!funcionarioMB.edit}"/>
+                    
+                    <p:messages for="pwd1" id="messages" showDetail="false" autoUpdate="true" rendered="#{!funcionarioMB.edit}"/>
+                    
+                    <p:row>
+                        <p:column><p:outputLabel value="Tipo usuario:"></p:outputLabel></p:column>
+                        <p:column><p:spacer width="170" height="10" /></p:column>
+                        <p:column><p:outputLabel value="Administrador ?:"></p:outputLabel></p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:selectOneMenu   id="somTipoUsuario" required="true" value="#{funcionarioMB.funcionario.tipoFuncionario}" label="Tipo usuario"
+                                               validatorMessage="Seleccione un valor" converter="#{catalogoConverter}">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{catalogMB.tiposFuncionario}"
+                                        var="tipoFuncionario"
+                                        itemLabel="#{tipoFuncionario.nombre}"
+                                        itemValue="#{tipoFuncionario}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column><p:spacer width="100" height="10" /></p:column>
+                        <p:column><p:selectBooleanCheckbox id="administrador" value="#{funcionarioMB.funcionario.administrador}"/></p:column>
+                    </p:row>
+                    
+                    <f:facet name="footer">
+                        <h:panelGroup style="display:block; text-align:center">
+                            <p:commandButton value="Guardar" action="#{funcionarioMB.saveAction()}" ajax="false"/>
+                            <p:commandButton value="Cancelar" action="#{funcionarioMB.cancelAction()}" immediate="true" ajax="false"/>
+                        </h:panelGroup>
+                    </f:facet>
+                </p:panelGrid>
+                
+                <!--<p:panelGrid columns="1" styleClass="panel_grid_center02">               
+                    <f:facet name="footer">
+                        <h:panelGroup style="display:block; text-align:center">
+                            
+                        </h:panelGroup>
+                    </f:facet>
+                </p:panelGrid>-->
+            </h:form>
+            
+        </ui:define>
+    </ui:composition>
+</html>
+

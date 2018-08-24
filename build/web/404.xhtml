@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    
+    <ui:composition template="/templates/basetemplate.xhtml">
+        <ui:define name="title">
+             <h:outputText value="Error 404"/>
+        </ui:define>
+        
+        <ui:define name="content">
+            
+            <h:form>
+                <p:growl id="growl" showDetail="true" sticky="true" />
+                
+                <p:panelGrid columns="2">
+                    <p:graphicImage width="280" height="341" value="./resources/images/404.png"/>
+                    <p:panelGrid columns="1" style="text-align: center">
+                        <p:outputLabel value="¡¡¡ LO SENTIMOS !!!"></p:outputLabel>
+                        <p:outputLabel value="El recurso solicitado no existe en el servidor"></p:outputLabel>
+                    </p:panelGrid>
+                </p:panelGrid>
+                
+            </h:form>
+            
+        </ui:define>
+    </ui:composition>
+</html>
+

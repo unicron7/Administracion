@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+        <p:idleMonitor timeout="#{idleMonitorView.timeout}">
+            <p:ajax event="idle" listener="#{idleMonitorView.onIdle()}"/>
+        </p:idleMonitor>
+        
+        <p:dialog header="La sesión ha expirado" widgetVar="sessionTimeOutDialog"
+                  modal="true" closable="false" width="521" visible="false" resizable="false">
+            <center>
+                <p:panelGrid styleClass="pgsinborde">
+                    <p:row>
+                        <p:column rowspan="3">
+                            <p:graphicImage width="120" height="120" value="./resources/images/reloj-espiral.png" style="alignment-adjust: central"/>
+                        </p:column>
+                        
+                        <p:column>
+                            <p:outputLabel value="Esta viendo este mensaje porque su sesión ha expirado por inactividad." style="word-wrap: break-word"/>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Por favor, haga clic en el botón [Aceptar] para volver a ingresar al sistema" style="word-wrap: break-word"/>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:spacer height="10" width="10"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                
+                <input id="confirmBackToLogin" type="button" value="Aceptar"
+                   onclick="window.location='#{facesContext.externalContext.requestContextPath}';"/>
+                <br/>
+            </center>
+        </p:dialog>
+    </ui:composition>
+</html>

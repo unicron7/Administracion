@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <p:dataTable id="cmadt" var="auditoria" value="#{auditoriaMB.auditorias}" 
+                                     paginator="true" rows="10" 
+                                     currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}" 
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" styleClass="texto_tabla_pn" rowIndexVar="rowIndex" 
+                                     emptyMessage="No tiene auditorias designadas">
+        <p:column headerText="N°" style="width:20px;text-align:right">
+            <h:outputText value="#{rowIndex + 1}"/>
+        </p:column>
+
+        <p:column headerText="Código catastro" sortBy="#{auditoria.concesionMinera.codigo_arcom}" style="width:80px;text-align:center">
+            <h:outputText  styleClass="texto_tabla_pn_codigo" value="#{auditoria.concesionMinera.codigo_arcom}"/>
+        </p:column>
+
+        <p:column headerText="Nombre" sortBy="#{auditoria.concesionMinera.nombre_concesion}">
+            <h:outputText value="#{auditoria.concesionMinera.nombre_concesion}"/>
+        </p:column>
+
+        <p:column headerText="Documento Titular" sortBy="#{auditoria.documentoTitular}">
+            <h:outputText value="#{auditoria.documentoTitular}"/>
+        </p:column>
+
+        <p:column headerText="Titular">
+            <h:outputText value="#{usuarioMB.obtenerNombreTitular(auditoria.documentoTitular)}"/>
+        </p:column>
+        
+        <p:column headerText="Auditor" sortBy="#{auditoria.auditor.razonSocial}">
+            <h:outputText value="#{auditoria.auditor.razonSocial}"/>
+        </p:column>
+        
+        <p:column headerText="Tipo de Auditoria" sortBy="#{auditoria.tipoAuditoria}">
+            <h:outputText value="#{catalogMB.obtenerCatalogoPorId(auditoria.tipoAuditoria).nombre}"/>
+        </p:column>
+
+        <p:column headerText="Fecha asignación" sortBy="#{auditoria.fechaDeAsignacion}" style="width:100px;text-align: center">
+            <h:outputText value="#{auditoria.obtenerFecha()}"/> 
+        </p:column>
+
+        <p:column headerText="Estado" style="width:90px;text-align: center">
+            <h:outputText value="#{auditoria.estadoAuditoria.nombre}"/> 
+        </p:column>
+    </p:dataTable>
+</ui:composition>

@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    
+    <ui:composition template="/templates/basetemplate.xhtml">
+        <ui:define name="title">
+             <h:outputText value="Agregar Curso"/>
+        </ui:define>
+        
+        <ui:define name="content">
+            
+            <h:form>
+                <h2 class="titulo_centrado">Datos del Curso</h2>
+                <p:panelGrid columns="2" styleClass="panel_grid_center" 
+                             columnClasses="columna_izquierda, columna_derecha">
+                    <f:facet name="header">
+                        <h:panelGroup style="display:block; text-align:center">
+                            <p:outputLabel value="DATOS DEL CURSO"/>
+                        </h:panelGroup>
+                    </f:facet>
+                    
+                    <p:outputLabel value="Nombre del curso:"/>
+                    <p:inputText value="#{cursoMB.curso.nombre}" required="true" size="50"/>
+
+                    <p:outputLabel value="Fecha de inicio:"/>
+                    <p:calendar id="fecha0" value="#{cursoMB.curso.fechaDeInicio}" required="true" 
+                                pattern="dd-MM-yyyy" effect="slideDown" mode="inline" 
+                                mindate="#{cursoMB.fechaMinima}" styleClass="selector_fecha" 
+                                requiredMessage="Debe seleccionar una fecha"/>
+                    <p:outputLabel/>
+                    <p:message for="fecha0"/>
+                    
+                    <p:outputLabel value="Institución:"/>
+                    <p:selectOneMenu  id="somInstitucion" required="true" value="#{cursoMB.selectItemValue}"
+                                      converter="#{catalogoConverter}">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{catalogMB.instituciones}"
+                                        var="institucion"
+                                        itemLabel="#{institucion.nombre}"
+                                        itemValue="#{institucion}"/>
+                    </p:selectOneMenu>
+                    
+                    <p:outputLabel value="Facultad:"/>
+                    <p:inputText value="#{cursoMB.curso.facultad}" required="true" size="50"/>
+
+                    <p:outputLabel value="Lugar:"/>
+                    <p:inputText value="#{cursoMB.curso.lugar}" required="true" size="50"/>
+                    
+                    <p:outputLabel value="Persona de contacto:"/>
+                    <p:inputText value="#{cursoMB.curso.personaContacto}" required="true" size="50"/>
+                    
+                    <p:outputLabel value="Correo electrónico:"/>
+                    <p:inputText value="#{cursoMB.curso.correoElectronico}" required="true" size="50">
+                        <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$"/>
+                    </p:inputText>
+                    
+                    <p:outputLabel value="Teléfono fijo:"/>
+                    <p:inputText value="#{cursoMB.curso.telefonoFijo}" required="true" size="50">
+                        <f:validateRegex pattern="[a-zA-Z0-9-/.,\s]*"/>
+                    </p:inputText>
+                    
+                    <p:outputLabel value="Teléfono móvil:"/>
+                    <p:inputText value="#{cursoMB.curso.telefonoMovil}" required="true" size="50">
+                        <f:validateLength minimum="10" maximum="10"/>
+                        <f:validateRegex pattern="[0-9]*"/>
+                    </p:inputText>
+                    
+                    <p:outputLabel value="Enlace página web:"/>
+                    <p:inputText value="#{cursoMB.curso.link}" required="true" size="50"/>
+                    
+                    <f:facet name="footer">
+                        <h:panelGroup style="display:block; text-align:center">
+                        </h:panelGroup>
+                    </f:facet>
+                </p:panelGrid>
+                
+                <p:panelGrid columns="1" styleClass="panel_grid_center">                    
+                    <f:facet name="footer">
+                        <h:panelGroup style="display:block; text-align:center">
+                            <p:commandButton value="Guardar" action="#{cursoMB.saveAction()}" ajax="false"/>
+                            <p:commandButton value="Cancelar" action="#{cursoMB.cancelAction()}" immediate="true" ajax="false"/>
+                        </h:panelGroup>
+                    </f:facet>
+                </p:panelGrid>
+            </h:form>
+            
+        </ui:define>
+    </ui:composition>
+</html>
+

@@ -1,0 +1,315 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    
+    <ui:composition template="/templates/basetemplate.xhtml">
+        <ui:define name="title">
+             <h:outputText value="Persona Jurídica"/>
+        </ui:define>
+        
+        <ui:define name="content">
+            <h:form id="formpj">
+                <p:growl id="growl" showDetail="true"/>
+                
+                <p:tabView id="tabviewauditor">
+                    <p:tab title="Información del Auditor">
+                        <h2 class="titulo_centrado">PERSONA JURÍDICA</h2>
+                        <p:panelGrid id="estadopanel" columns="3" styleClass="panel_grid_center" 
+                                     columnClasses="columna_izquierda, columna_derecha">
+                            <f:facet name="header">
+                                <h:panelGroup style="display:block; text-align:center">
+                                    <p:outputLabel value="ESTADO DEL AUDITOR"/>
+                                </h:panelGroup>
+                            </f:facet>
+                            
+                            <p:outputLabel value="Estado actual:"/>
+                            <p:outputLabel id="estadoactualauditor" style="font-weight: bold" value="#{catalogMB.obtenerCatalogoPorId(auditorAdminMB.personaJuridica.estado).nombre}"/>
+                            <p:commandLink value="Cambiar estado" actionListener="#{auditorAdminMB.editarEstadoAuditor()}" update=":modestadodlg" oncomplete="PF('modestado').show()" immediate="true" styleClass="lnksestado"/>
+                            
+                            <p:spacer/>
+                            <p:spacer/>
+                            <p:commandLink id="informebtn" value="Subir informe de inscripción" update=":uploadinfdlg :formpj:growl" actionListener="#{auditorAdminMB.mostrarUploadInforme()}" 
+                                           disabled="#{auditorAdminMB.disabledInformeLnk}" styleClass="lnksestado"/>
+                            
+                            <p:spacer/>
+                            <p:spacer/>
+                            <p:commandLink id="resolucionbtn" value="Subir resolución de calificación" update=":uploadresdlg :formpj:growl" actionListener="#{auditorAdminMB.mostrarUploadResolucion()}"
+                                           disabled="#{auditorAdminMB.disabledResolicionLnk}" styleClass="lnksestado"/>
+                            
+                            <p:outputLabel id="codigolabel" value="Código Auditor:" rendered="#{auditorAdminMB.estaCalificadoPJ()}"/>
+                            <p:spacer/>
+                            <p:inputText id="codigotxt" value="#{auditorAdminMB.personaJuridica.codigo}" rendered="#{auditorAdminMB.estaCalificadoPJ()}"/>
+                            
+                            <f:facet name="footer">
+                                <h:panelGroup style="display:block; text-align:center">
+                                </h:panelGroup>
+                            </f:facet>
+                        </p:panelGrid>
+                        
+                        <p:panelGrid columns="2" styleClass="panel_grid_center">
+                            <f:facet name="header">
+                                <h:panelGroup style="display:block; text-align:center">
+                                    <p:outputLabel value="TIPO DE AUDITOR"/>
+                                </h:panelGroup>
+                            </f:facet>
+                            
+                            <p:row>
+                                <p:column>
+                                    <p:dataTable id="tiposauditordt" var="tipo" value="#{auditorAdminMB.tiposAuditor}"
+                                                 emptyMessage="No se han agregado tipos de auditor">
+                                        <p:column>
+                                            <h:outputText value="#{tipo}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:column>
+                            </p:row>
+                            <p:commandButton value="Agregar" update=":addtipodlg" oncomplete="PF('addtipo').show()" immediate="true"/>
+                            
+                            <f:facet name="footer">
+                                <h:panelGroup style="display:block; text-align:center">
+                                </h:panelGroup>
+                            </f:facet>
+                        </p:panelGrid>
+                        
+                        <p:panelGrid columns="2" styleClass="panel_grid_center"
+                                     columnClasses="columna_izquierda, columna_derecha">
+                            <f:facet name="header">
+                                <h:panelGroup style="display:block; text-align:center">
+                                    <p:outputLabel value="DATOS DE LA ENTIDAD"/>
+                                </h:panelGroup>
+                            </f:facet>
+
+                            <p:outputLabel value="RUC:"></p:outputLabel>
+                            <h:outputLabel id="ruc" value="#{auditorAdminMB.personaJuridica.ruc}"/>
+
+                            <p:outputLabel value="Razón social:"></p:outputLabel>
+                            <p:outputLabel id="rsocial" value="#{auditorAdminMB.personaJuridica.razonSocial}"/>
+
+                            <p:outputLabel value="Años de experiencia:"></p:outputLabel>
+                            <p:outputLabel  value="#{auditorAdminMB.personaJuridica.aniosExperiencia}"/>
+
+                            <p:outputLabel value="Resumen experiencia:"></p:outputLabel>
+                            <p:inputTextarea autoResize="false" cols="28" value="#{auditorAdminMB.personaJuridica.resumenExperiencia}" readonly="true"/>
+
+                            <p:outputLabel value="Email:"></p:outputLabel>
+                            <p:outputLabel id="email" value="#{auditorAdminMB.personaJuridica.email}"/>
+
+                            <p:outputLabel value="Telefono fijo"></p:outputLabel>
+                            <p:outputLabel id="fijo" value="#{auditorAdminMB.personaJuridica.telefonoFijo}"/>
+
+                            <p:outputLabel value="Telefono movil:"></p:outputLabel>
+                            <p:outputLabel id="movil" value="#{auditorAdminMB.personaJuridica.telefonoMovil}"/>
+
+                            <f:facet name="footer">
+                                <h:panelGroup style="display:block; text-align:center">
+                                </h:panelGroup>
+                            </f:facet>
+                        </p:panelGrid>
+
+
+                        <p:panelGrid columns="2" styleClass="panel_grid_center"
+                                     columnClasses="columna_izquierda, columna_derecha">
+                            <f:facet name="header">
+                                <h:panelGroup style="display:block; text-align:center">
+                                    <p:outputLabel value="DATOS DEL REPRESENTANTE LEGAL"/>
+                                </h:panelGroup>
+                            </f:facet>
+
+                            <p:outputLabel value="Cédula:"></p:outputLabel>
+                            <p:outputLabel id="cedula" value="#{auditorAdminMB.personaJuridica.cedulaRepresentanteLegal}"/>
+
+                            <p:outputLabel value="Nombres:"></p:outputLabel>
+                            <p:outputLabel id="nombre" value="#{auditorAdminMB.personaJuridica.nombreRepresentanteLegal}"/>
+
+                            <p:outputLabel value="Apellidos:"></p:outputLabel>
+                            <p:outputLabel id="apellido" value="#{auditorAdminMB.personaJuridica.apellidoRepresentanteLegal}"/>
+
+                            <f:facet name="footer">
+                                <h:panelGroup style="display:block; text-align:center">
+                                </h:panelGroup>
+                            </f:facet>
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="2" styleClass="panel_grid_center"
+                                     columnClasses="columna_izquierda, columna_derecha">
+                            <f:facet name="header">
+                                <h:panelGroup style="display:block; text-align:center">
+                                    <p:outputLabel value="DIRECCIÓN"/>
+                                </h:panelGroup>
+                            </f:facet>
+                            <p:outputLabel value="Provincia:"></p:outputLabel>
+                            <p:selectOneMenu  id="somProvincia" required="true" value="#{auditorAdminMB.personaJuridica.direccion.provincia}" disabled="true" >
+                                <f:selectItems value="#{auditorAdminMB.provincias}"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Ciudad:"></p:outputLabel>
+                            <p:outputLabel value="#{auditorAdminMB.personaJuridica.direccion.ciudad}"/>
+
+                            <p:outputLabel value="Calles:"></p:outputLabel>
+                            <p:outputLabel value="#{auditorAdminMB.personaJuridica.direccion.calles}"/>
+
+                            <p:outputLabel value="Número:"></p:outputLabel>
+                            <p:outputLabel value="#{auditorAdminMB.personaJuridica.direccion.numero}"/>
+
+                            <f:facet name="footer">
+                                <h:panelGroup style="display:block; text-align:center">
+                                </h:panelGroup>
+                            </f:facet>
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="1" styleClass="panel_grid_center">
+                            <f:facet name="footer">
+                                <h:panelGroup style="display:block; text-align:center">
+                                    <p:commandButton value="Actualizar" action="#{auditorAdminMB.updateActionPJur()}" ajax="false"></p:commandButton>
+                                    <p:commandButton value="Cancelar" action="#{auditorAdminMB.cancelAction()}" immediate="true" ajax="false"></p:commandButton>
+                                </h:panelGroup>
+                            </f:facet>
+                        </p:panelGrid>
+                    </p:tab>
+                    
+                    <p:tab title="Detalle de pagos">
+                        <p:dataTable id="pagodt" value="#{auditorAdminMB.personaJuridica.pagos}" var="transaccion"
+                                     styleClass="texto_tabla_listas_admin" emptyMessage="No existen pagos registrados">
+                            <p:column headerText="Entidad">
+                                <h:outputText value="#{transaccion.entidadFinanciera}"/>
+                            </p:column>
+
+                            <p:column headerText="Número">
+                                <h:outputText value="#{transaccion.numeroDeposito}"/>
+                            </p:column>
+
+                            <p:column headerText="Fecha">
+                                <h:outputText value="#{transaccion.obtenerFecha()}"/>
+                            </p:column>
+
+                            <p:column headerText="Valor">
+                                <h:outputText value="#{transaccion.obtenerValor()}"/>
+                            </p:column>
+                        </p:dataTable>
+                            
+                    </p:tab>
+                    
+                    <p:tab title="Archivos adjuntos">
+                        
+                        Adjuntos
+                        <p:dataList id="filelist" value="#{auditorAdminMB.downloadedFiles}" var="file" type="ordered" styleClass="size_uploadfiles" 
+                                    emptyMessage="No se encontraron archivos">
+                            <p:commandLink value="#{file.name}" ajax="false" styleClass="lnkadjuntos">
+                                <p:fileDownload value="#{file}" />
+                            </p:commandLink>
+                        </p:dataList>
+                        <p:commandButton value="Cargar adjuntos" actionListener="#{auditorAdminMB.changeFileUploadStateFase02()}"
+                                         update="tabviewauditor fuadjuntosfase02"/>
+                        
+                        <br></br>
+                        <br></br>
+                        
+                        <p:fileUpload id="fuadjuntosfase02" mode="advanced" sizeLimit="8388608" allowTypes="/(\.|\/)(pdf|PDF)$/" 
+                          fileLimitMessage="Solo puede subir 1 archivo" invalidSizeMessage="Su archivo excede el tamaño permitido de 8MB" 
+                          invalidFileMessage="Solo puede subir archivos PDF" 
+                          cancelLabel="Cancelar" uploadLabel="Subir" label="Examinar" 
+                          fileUploadListener="#{auditorAdminMB.handleFileUploadAdjuntosFase02}" style="width: 600px"
+                          rendered="#{auditorAdminMB.showfuadjuntosfase02}"
+                          update="filelist :formpj:growl"/>
+                        
+                        <br></br>
+                        <br></br>
+                        
+                        Informe de inscripción
+                        <p:dataList id="inf" value="#{auditorAdminMB.informeFiles}" var="informe" type="ordered" styleClass="size_uploadfiles" 
+                                    emptyMessage="No se encontraron archivos">
+                            <p:commandLink value="#{informe.name}" ajax="false" styleClass="lnkadjuntos">
+                                <p:fileDownload value="#{informe}" />
+                            </p:commandLink>
+                        </p:dataList>
+                        
+                        <br></br>
+                        Certificado de aprobación de curso
+                        <p:dataList id="cer" value="#{auditorAdminMB.certificadoFiles}" var="certificado" type="ordered" styleClass="size_uploadfiles" 
+                                    emptyMessage="No se encontraron archivos">
+                            <p:commandLink value="#{certificado.name}" ajax="false" styleClass="lnkadjuntos">
+                                <p:fileDownload value="#{certificado}" />
+                            </p:commandLink>
+                        </p:dataList>
+                        
+                        <br></br>
+                        Resolución de calificación
+                        <p:dataList id="res" value="#{auditorAdminMB.resolucionFiles}" var="resolucion" type="ordered" styleClass="size_uploadfiles" 
+                                    emptyMessage="No se encontraron archivos">
+                            <p:commandLink value="#{resolucion.name}" ajax="false" styleClass="lnkadjuntos">
+                                <p:fileDownload value="#{resolucion}" />
+                            </p:commandLink>
+                        </p:dataList>
+                        
+                    </p:tab>
+                    
+                    <p:tab title="Auditorias designadas">
+                        <ui:include src="auditoriasdesignadastab.xhtml"/>
+                    </p:tab>
+                </p:tabView>
+            </h:form>
+            
+            <p:dialog id="modestadodlg" widgetVar="modestado" header="Cambiar estado" modal="true" 
+                      resizable="false" showEffect="clip" hideEffect="clip" width="250" height="100">
+                <h:form>
+                    <br/>
+                    &nbsp;
+                    <p:selectOneMenu id="somEstadoAuditor" value="#{auditorAdminMB.selectedEstadoValue}" label="Tipo auditor" validatorMessage="Seleccione un valor">
+                        <f:selectItems value="#{catalogMB.estadosAuditor}"/>
+                    </p:selectOneMenu>
+                    <br/>
+                    &nbsp;
+                    <p:commandButton value="Seleccionar"  oncomplete="PF('modestado').hide()" update=":formpj:tabviewauditor:estadoactualauditor
+                                     :formpj:tabviewauditor:estadopanel :formpj:tabviewauditor:codigolabel :formpj:tabviewauditor:codigotxt"
+                                     actionListener="#{auditorAdminMB.cambiarEstadoAuditor()}"/>
+                    &nbsp;
+                </h:form>
+            </p:dialog>
+            
+            <p:dialog id="addtipodlg" widgetVar="addtipo" header="Agregar tipo auditor" modal="true" 
+                      resizable="false" showEffect="clip" hideEffect="clip" width="400" height="150">
+                <h:form>
+                    <br/>
+                    &nbsp;
+                    <p:selectOneMenu id="somTipoAuditor" value="#{auditorAdminMB.selectedCatalogValue}" label="Tipo auditor" validatorMessage="Seleccione un valor">
+                        <f:selectItems value="#{catalogMB.tiposAuditor}"/>
+                    </p:selectOneMenu>
+                    <br/>
+                    <br/>
+                    &nbsp;
+                    <p:commandButton value="Seleccionar"  oncomplete="PF('addtipo').hide()" update=":formpj:tabviewauditor:tiposauditordt"
+                                     actionListener="#{auditorAdminMB.addTipoAuditor()}"/>
+                    &nbsp;
+                </h:form>
+            </p:dialog>
+            
+            <p:dialog id="uploadinfdlg" widgetVar="uploadinf" header="Subir informe" modal="true" 
+                resizable="false" showEffect="clip" hideEffect="clip" width="550" height="200">
+                <h:form id="formuploadinf">
+                    <p:fileUpload id="fulc" mode="advanced" fileLimit="1" sizeLimit="8388608" allowTypes="/(\.|\/)(pdf|PDF)$/" 
+                                  fileLimitMessage="Solo puede subir 1 archivo" invalidSizeMessage="Su archivo excede el tamaño permitido de 8MB" 
+                                  invalidFileMessage="Solo puede subir archivos PDF" 
+                                  cancelLabel="Cancelar" uploadLabel="Subir" label="Examinar" 
+                                  fileUploadListener="#{auditorAdminMB.handleFileUploadInforme}" styleClass="size_uploadfiles"
+                                  oncomplete="PF('uploadinf').hide()" update=":formpj:growl :formpj:tabviewauditor:inf"/>
+                </h:form>
+            </p:dialog>
+            
+            <p:dialog id="uploadresdlg" widgetVar="uploadres" header="Subir resolución" modal="true" 
+                resizable="false" showEffect="clip" hideEffect="clip" width="550" height="200">
+                <h:form id="formuploadres">
+                    <p:fileUpload id="fulc" mode="advanced" fileLimit="1" sizeLimit="8388608" allowTypes="/(\.|\/)(pdf|PDF)$/" 
+                                  fileLimitMessage="Solo puede subir 1 archivo" invalidSizeMessage="Su archivo excede el tamaño permitido de 8MB" 
+                                  invalidFileMessage="Solo puede subir archivos PDF" 
+                                  cancelLabel="Cancelar" uploadLabel="Subir" label="Examinar" 
+                                  fileUploadListener="#{auditorAdminMB.handleFileUploadResolucion}" styleClass="size_uploadfiles"
+                                  oncomplete="PF('uploadres').hide()" update=":formpj:growl :formpj:tabviewauditor:res"/>
+                </h:form>
+            </p:dialog>
+        </ui:define>
+    </ui:composition>
+</html>
+

@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/templates/basetemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="title">
+         <h:outputText value="Login Administración Auditores"/>
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:form>
+            <p:growl id="growl" showDetail="true"/>
+
+            <p:panelGrid columns="2" styleClass="panel_grid_center_login">
+                <f:facet name="header">
+                    <h:panelGroup style="display:block; text-align:center">
+                        <p:outputLabel value="Sistema de Administración de Auditores"></p:outputLabel>
+                    </h:panelGroup>
+                </f:facet>
+
+                <p:outputLabel value="Usuario:"></p:outputLabel>
+                <p:inputText size="30" value="#{loginMB.userName}"></p:inputText>
+                <p:outputLabel value="Clave:"></p:outputLabel>
+                <p:password size="30" value="#{loginMB.userPassword}"></p:password>
+
+                <f:facet name="footer">
+                    <h:panelGroup style="display:block; text-align:center">
+                        <p:commandButton value="Ingresar" action="#{loginMB.loginAction()}" icon="ui-icon-unlocked" ajax="false"></p:commandButton>
+                    </h:panelGroup>
+                </f:facet>
+            </p:panelGrid>
+        </h:form>
+
+    </ui:define>
+</ui:composition>
+

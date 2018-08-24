@@ -1,0 +1,560 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/templates/basetemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    
+    <ui:define name="title">
+         <h:outputText value="Administración"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form01">
+            <p:growl id="growl" showDetail="true"/>
+            <p:panelGrid styleClass="panelwelcome">
+                <p:row>
+                    <p:column>
+                        <h4 class="welcomemsg">Bienvenid@: <p:outputLabel value="#{auditorAdminMB.obtenerNombreFuncionario()}" styleClass="welcomemsg02"></p:outputLabel></h4>
+                    </p:column>
+
+                    <p:column style="text-align: right">
+                        <p:commandButton id="dynaButton" value="Mi cuenta" type="button" icon="ui-icon-gear"/>
+                        <p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom">
+                            <p:menuitem value="Cerrar sesión" icon="ui-icon-extlink" action="#{loginMB.logoutAction()}"/>
+                        </p:menu>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+
+            <p:panelGrid columns="2" styleClass="panelusuario"
+                         columnClasses="columnaizquierda_panelusuario, columnaderecha_panelusuario">
+                <p:spacer width="100"/>
+                <p:panelGrid columns="4" styleClass="panelgridbusqueda" rendered="#{auditorAdminMB.renderedPanelBusqueda}">
+                    <p:outputLabel value="Buscar auditor:" style="text-align: right"/>
+                    <p:inputText id="rucfind" value="#{auditorAdminMB.valorBuscarPersona}"/>
+                    <h:commandButton value="Buscar" actionListener="#{auditorAdminMB.buscarPersona()}" 
+                                     image="./resources/images/search-icon.png">
+                        <p:ajax process="@this rucfind" update="tabulador:pndt tabulador:pjdt tabulador growl"/>
+                    </h:commandButton>
+                    <p:watermark for="rucfind" value="Ingrese RUC a buscar"/>
+
+                </p:panelGrid>
+            </p:panelGrid>
+
+            <p:tabView id="tabulador" activeIndex="#{auditorAdminMB.activeTab}">
+                <p:tab title="Persona Natural" rendered="#{auditorAdminMB.showtabpn}">
+                    <f:facet name="title">
+                        <p:graphicImage value="./resources/images/natural-icon.png" width="20" height="20"/>
+                        <p:spacer width="10" height="10"/>
+                        <h:outputText value="Persona Natural"/>
+                    </f:facet>
+
+                    <p:panelGrid columns="6" styleClass="panelgridtabs">
+                        <p:graphicImage width="50" height="50" value="./resources/images/natural-icon.png" style="alignment-adjust: central"/>
+                        <p:commandButton value="Listar" actionListener="#{auditorAdminMB.obtenerPersonasNaturales()}"
+                                         process="@this" update="pndt" 
+                                         icon="ui-icon-note"/>
+                    </p:panelGrid>
+                    <p:dataTable id="pndt" var="pnat" value="#{auditorAdminMB.personasNaturales}" styleClass="texto_tabla_listas_admin" 
+                                 emptyMessage="No hay resultados..." rowIndexVar="rowIndex" paginator="true"
+                                 currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}" 
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                 rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" rows="10"
+                                 widgetVar="pnatsTable" filteredValue="#{auditorAdminMB.filteredPersonasNaturales}">
+
+                        <p:column headerText="RUC" sortBy="#{pnat.ruc}">
+                            <h:outputText  styleClass="texto_tabla_listas_admin_codigo" value="#{pnat.ruc}" />
+                        </p:column>
+
+                        <p:column headerText="Razón social" sortBy="#{pnat.razonSocial}">
+                            <h:outputText value="#{pnat.razonSocial}"/>
+                        </p:column>
+
+                        <p:column headerText="Años experiencia" style="width:80px;text-align: center" sortBy="#{pnat.aniosExperiencia}">
+                            <h:outputText value="#{pnat.aniosExperiencia}"/>
+                        </p:column>
+
+                        <p:column headerText="Cédula representante legal">
+                            <h:outputText value="#{pnat.cedulaRepresentanteLegal}"/>
+                        </p:column>
+
+                        <p:column headerText="Apellido representante legal" sortBy="#{pnat.apellidoRepresentanteLegal}">
+                            <h:outputText value="#{pnat.apellidoRepresentanteLegal}"/>
+                        </p:column>
+
+                        <p:column headerText="Nombre representante legal" sortBy="#{pnat.nombreRepresentanteLegal}">
+                            <h:outputText value="#{pnat.nombreRepresentanteLegal}"/>
+                        </p:column>
+
+                        <p:column headerText="Estado" style="width:135px;text-align: center" sortBy="#{pnat.estado.id}"
+                                  filterBy="#{pnat.estado}" filterMatchMode="exact">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('pnatsTable').filter()" valueChangeListener="#{auditorAdminMB.changeFiltroAplicadoPN()}"
+                                                 converter="#{catalogoConverter}">
+                                    <f:selectItem itemLabel="Todo" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{catalogMB.estadosAuditor}"
+                                       var="estado"
+                                       itemLabel="#{estado.nombre}"
+                                       itemValue="#{estado}"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{pnat.estado.nombre}"/>
+                        </p:column>
+
+                        <p:column headerText="Editar" style="width:60px;text-align: center">
+                            <p:commandButton action="#{auditorAdminMB.editNaturalAction(rowIndex)}" icon="ui-icon-pencil" title="Editar" ajax="false"></p:commandButton>
+                        </p:column>
+
+                        <p:column headerText="Resetear Clave" style="width:60px;text-align: center" rendered="#{auditorAdminMB.showResetPassword}">
+                            <p:commandButton actionListener="#{auditorAdminMB.establecerAuditorModificar(rowIndex)}" icon="ui-icon-key" title="Resetear clave" oncomplete="PF('resetpasspn').show()"></p:commandButton>
+                        </p:column>
+
+                        <p:column headerText="Eliminar" style="width:60px;text-align: center" rendered="#{auditorAdminMB.showResetPassword}">
+                            <p:commandButton actionListener="#{auditorAdminMB.establecerAuditorModificar(rowIndex)}" icon="ui-icon-trash" title="Eliminar" oncomplete="PF('deleteauditorpn').show()"></p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+
+                <p:tab title="Persona Jurídica" rendered="#{auditorAdminMB.showtabpj}" titleStyleClass="tabred">
+                    <f:facet name="title">
+                        <p:graphicImage value="./resources/images/juridica-icon.png" width="20" height="20"/>
+                        <p:spacer width="10" height="10"/>
+                        <h:outputText value="Persona Jurídica"/>
+                    </f:facet>
+
+                    <p:panelGrid columns="6" styleClass="panelgridtabs">
+                        <p:graphicImage width="50" height="50" value="./resources/images/juridica-icon.png" style="alignment-adjust: central"/>
+                        <p:commandButton value="Listar" actionListener="#{auditorAdminMB.obtenerPersonasJuridicas()}"
+                                         process="@this" update="pjdt" 
+                                         icon="ui-icon-note"/>
+                    </p:panelGrid>
+                    <p:dataTable id="pjdt" var="pjur" value="#{auditorAdminMB.personasJuridicas}" styleClass="texto_tabla_listas_admin" 
+                                 emptyMessage="No hay resultados..." rowIndexVar="rowIndex" paginator="true" 
+                                 currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}" 
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                 rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" rows="10"
+                                 widgetVar="pjursTable" filteredValue="#{auditorAdminMB.filteredPersonasJuridicas}">
+
+                        <p:column headerText="RUC" sortBy="#{pjur.ruc}">
+                            <h:outputText  styleClass="texto_tabla_listas_admin_codigo" value="#{pjur.ruc}" />
+                        </p:column>
+
+                        <p:column headerText="Razón social" sortBy="#{pjur.razonSocial}">
+                            <h:outputText value="#{pjur.razonSocial}"/>
+                        </p:column>
+
+                        <p:column headerText="Años experiencia" style="width:80px;text-align: center" sortBy="#{pjur.aniosExperiencia}">
+                            <h:outputText value="#{pjur.aniosExperiencia}"/>
+                        </p:column>
+
+                        <p:column headerText="Cédula representante legal">
+                            <h:outputText value="#{pjur.cedulaRepresentanteLegal}"/>
+                        </p:column>
+
+                        <p:column headerText="Apellido representante legal" sortBy="#{pjur.apellidoRepresentanteLegal}">
+                            <h:outputText value="#{pjur.apellidoRepresentanteLegal}"/>
+                        </p:column>
+
+                        <p:column headerText="Nombre representante legal" sortBy="#{pjur.nombreRepresentanteLegal}">
+                            <h:outputText value="#{pjur.nombreRepresentanteLegal}"/>
+                        </p:column>
+
+                        <p:column headerText="Estado" style="width:135px;text-align: center" sortBy="#{pjur.estado.id}"
+                                  filterBy="#{pjur.estado}" filterMatchMode="exact">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('pjursTable').filter()" valueChangeListener="#{auditorAdminMB.changeFiltroAplicadoPJ()}"
+                                                 converter="#{catalogoConverter}">
+                                    <f:selectItem itemLabel="Todo" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{catalogMB.estadosAuditor}"
+                                       var="estado"
+                                       itemLabel="#{estado.nombre}"
+                                       itemValue="#{estado}"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{pjur.estado.nombre}"/>
+                        </p:column>
+
+                        <p:column headerText="Editar" style="width:60px;text-align: center">
+                            <p:commandButton action="#{auditorAdminMB.editJuridicaAction(rowIndex)}" icon="ui-icon-pencil" title="Editar" ajax="false"></p:commandButton>
+                        </p:column>
+
+                        <p:column headerText="Resetear Clave" style="width:60px;text-align: center" rendered="#{auditorAdminMB.showResetPassword}">
+                            <p:commandButton actionListener="#{auditorAdminMB.establecerAuditorModificar(rowIndex)}" icon="ui-icon-key" title="Resetear clave" oncomplete="PF('resetpasspj').show()"></p:commandButton>
+                        </p:column>
+
+                        <p:column headerText="Eliminar" style="width:60px;text-align: center" rendered="#{auditorAdminMB.showResetPassword}">
+                            <p:commandButton actionListener="#{auditorAdminMB.establecerAuditorModificar(rowIndex)}" icon="ui-icon-trash" title="Eliminar" oncomplete="PF('deleteauditorpj').show()"></p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+                <p:tab title="Cursos" rendered="#{auditorAdminMB.showtabcursos}">
+                    <f:facet name="title">
+                        <p:graphicImage value="./resources/images/book-icon.png" width="20" height="20"/>
+                        <p:spacer width="10" height="10"/>
+                        <h:outputText value="Cursos"/>
+                    </f:facet>
+
+                    <p:panelGrid columns="6" styleClass="panelgridtabs">
+                        <p:graphicImage width="50" height="50" value="./resources/images/book-icon.png" style="alignment-adjust: central"/>
+                        <p:commandButton value="Nuevo" action="#{auditorAdminMB.newCursoAction()}" icon="ui-icon-plus" ajax="false"/>
+                        <p:commandButton value="Listar" actionListener="#{auditorAdminMB.obtenerCursos()}"
+                                         process="@this" update="cursodt" 
+                                         icon="ui-icon-note"/>
+                        <p:inputText id="cursofind" value="#{auditorAdminMB.valorBuscarCurso}" size="35"/>
+                        <p:commandButton value="Buscar" actionListener="#{auditorAdminMB.buscarCursos()}"
+                                         process="@this cursofind" update="cursodt cursofind" 
+                                         icon="ui-icon-search"/>
+                        <p:watermark for="cursofind" value="Ingrese nombre de curso a buscar"/>
+                    </p:panelGrid>
+
+                    <p:dataTable id="cursodt" var="curso" value="#{auditorAdminMB.cursos}" styleClass="texto_tabla_listas_admin" 
+                                 emptyMessage="No hay cursos para mostrar..." rowIndexVar="rowIndex" paginator="true" 
+                                 currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}" 
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                 rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" rows="10">
+                        <p:column headerText="Nombre del curso" sortBy="#{curso.nombre}"> 
+                           <h:outputText value="#{curso.nombre}"/>
+                        </p:column>
+
+                        <p:column headerText="Fecha de inicio" sortBy="#{curso.fechaDeInicio}">
+                            <h:outputText value="#{curso.obtenerFecha()}" />
+                        </p:column>
+
+                        <p:column headerText="Institución" sortBy="#{curso.institucion.descripcion}">
+                            <h:outputText value="#{curso.institucion.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Facultad">
+                            <h:outputText value="#{curso.facultad}" />
+                        </p:column>
+
+                        <p:column headerText="Contacto">
+                            <h:outputText value="#{curso.personaContacto}" />
+                        </p:column>
+
+                        <p:column headerText="Correo electrónico">
+                            <h:outputText value="#{curso.correoElectronico}" />
+                        </p:column>
+
+                        <p:column headerText="Teléfono">
+                            <h:outputText value="#{curso.telefonoFijo}" />
+                        </p:column>
+
+                        <p:column headerText="Celular">
+                            <h:outputText value="#{curso.telefonoMovil}" />
+                        </p:column>
+
+                        <p:column headerText="Enlace">
+                            <h:outputText value="#{curso.link}" />
+                        </p:column>
+
+                        <p:column headerText="Lugar" sortBy="#{curso.lugar}">
+                            <h:outputText value="#{curso.lugar}" />
+                        </p:column>
+
+                        <p:column headerText="Editar" style="width:60px;text-align: center">
+                            <p:commandButton action="#{auditorAdminMB.editCursoAction(rowIndex)}" icon="ui-icon-pencil" title="Editar" ajax="false"></p:commandButton>
+                        </p:column>
+
+                        <p:column headerText="Eliminar" style="width:60px;text-align: center">
+                            <p:commandButton action="#{auditorAdminMB.deleteCursoAction(rowIndex)}" icon="ui-icon-trash" title="Eliminar" ajax="false"></p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+
+                <p:tab title="Usuarios" rendered="#{auditorAdminMB.showtabusuarios}">
+                    <f:facet name="title">
+                        <p:graphicImage value="./resources/images/user-icon.png" width="20" height="20"/>
+                        <p:spacer width="10" height="10"/>
+                        <h:outputText value="Usuarios"/>
+                    </f:facet>
+
+                    <p:panelGrid columns="6" styleClass="panelgridtabs">
+                        <p:graphicImage width="50" height="50" value="./resources/images/user-icon.png" style="alignment-adjust: central"/>
+                        <p:commandButton value="Nuevo" action="#{auditorAdminMB.newFuncionarioAction()}" icon="ui-icon-plus"/>
+                        <p:commandButton value="Listar" actionListener="#{auditorAdminMB.obtenerFuncionarios()}"
+                                         process="@this" update="usuariodt" 
+                                         icon="ui-icon-note"/>
+                        <p:inputText id="funcionariofind" value="#{auditorAdminMB.valorBuscarFuncionario}" size="35"/>
+                        <p:commandButton value="Buscar" actionListener="#{auditorAdminMB.buscarFuncionarios()}"
+                                         process="@this funcionariofind" update="usuariodt funcionariofind"
+                                         icon="ui-icon-search"/>
+                        <p:watermark for="funcionariofind" value="Ingrese apellido de usuario a buscar"/>
+                    </p:panelGrid>
+
+                    <p:dataTable id="usuariodt" var="usr" value="#{auditorAdminMB.funcionarios}" styleClass="texto_tabla_listas_admin"
+                                 emptyMessage="No hay usuarios para mostrar..." rowIndexVar="rowIndex" paginator="true" 
+                                 currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}" 
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                 rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" rows="10">
+                        <p:column headerText="Nombre de usuario">
+                            <h:outputText value="#{usr.userName}"/>
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{usr.nombre}"/>
+                        </p:column>
+
+                        <p:column headerText="Apellido">
+                            <h:outputText value="#{usr.apellido}"/>
+                        </p:column>
+
+                        <p:column headerText="Cargo">
+                            <h:outputText value="#{usr.cargo}"/>
+                        </p:column>
+
+                        <p:column headerText="Tipo">
+                            <h:outputText value="#{usr.tipoFuncionario.nombre}"/>
+                        </p:column>
+
+                        <p:column headerText="Aministrador">
+                            <h:outputText value="#{auditorAdminMB.esAdminToString(usr.administrador)}"/>
+                        </p:column>
+
+                        <p:column headerText="Editar" style="width:60px;text-align: center">
+                            <p:commandButton action="#{auditorAdminMB.editFuncionarioAction(rowIndex)}" icon="ui-icon-pencil" title="Editar" ajax="false"/>
+                        </p:column>
+
+                        <p:column headerText="Cambiar clave" style="width:60px;text-align: center">
+                            <p:commandButton icon="ui-icon-key" title="Cambiar clave" ajax="false"
+                                             action="#{auditorAdminMB.editPasswordAction(rowIndex)}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+
+                <p:tab id="catalogtab" title="Catálogo" rendered="#{auditorAdminMB.showtabusuarios}">
+                    <f:facet name="title">
+                        <p:graphicImage value="./resources/images/catalog-icon.png" width="20" height="20"/>
+                        <p:spacer width="10" height="10"/>
+                        <h:outputText value="Catálogo"/>
+                    </f:facet>
+
+                    <p:panelGrid columns="6" styleClass="panelgridtabs">
+                        <p:graphicImage width="50" height="50" value="./resources/images/catalog-icon.png" style="alignment-adjust: central"/>
+                        <p:commandButton value="Nuevo" icon="ui-icon-plus" update=":newtipocatdlg" actionListener="#{catalogMB.newTipoCatalogoAction()}" oncomplete="PF('newtipocat').show()"/>
+                        <p:commandButton value="Listar" actionListener="#{catalogMB.obtenerTiposCatalogo()}"
+                                         process="@this" update="tipocatalogdt"
+                                         icon="ui-icon-note"/>
+                        <p:inputText id="catalogfind" value="#{auditorAdminMB.valorBuscarFuncionario}" size="35"/>
+                        <p:commandButton value="Buscar"
+                                         process="@this catalogfind" update="tipocatalogdt"
+                                         icon="ui-icon-search"/>
+                        <p:watermark for="catalogfind" value="Ingrese nombre de catálogo a buscar"/>
+                    </p:panelGrid>
+
+                    <p:dataTable id="tipocatalogdt" var="tipocatalog" value="#{catalogMB.tiposCatalogo}" styleClass="texto_tabla_listas_admin"
+                                 emptyMessage="Aun no se han agregado catalogos" rowIndexVar="rowIndex" paginator="true" 
+                                 currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}" 
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                 rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" rows="10" editable="true">
+                        <p:column headerText="Id" style="width:60px;text-align: center">
+                            <h:outputText value="#{tipocatalog.id}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{tipocatalog.nombre}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Nemonico">
+                            <h:outputText value="#{tipocatalog.nemonico}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{tipocatalog.descripcion}"/>
+                        </p:column>
+
+                        <p:column headerText="Editar" style="width:60px;text-align: center">
+                            <p:commandButton icon="ui-icon-pencil" title="Editar" update=":formcat" immediate="true"
+                                             actionListener="#{catalogMB.editCatalogoAction(rowIndex)}" oncomplete="PF('cat').show()"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+
+                <p:tab title="Configuración" rendered="#{auditorAdminMB.showtabusuarios}">
+                    <f:facet name="title">
+                        <p:graphicImage value="./resources/images/config-icon.png" width="20" height="20"/>
+                        <p:spacer width="10" height="10"/>
+                        <h:outputText value="Configuración"/>
+                    </f:facet>
+
+                    <p:panelGrid columns="3" styleClass="panelgridtabs">
+                        <p:graphicImage width="50" height="50" value="./resources/images/config-icon.png" style="alignment-adjust: central"/>
+                    </p:panelGrid>
+
+                    <p:dataTable id="configsdt" var="systemConfig" value="#{auditorAdminMB.systemConfigs}" styleClass="texto_tabla_listas_admin"
+                                 emptyMessage="Aun no se han agregado configuraciones" rowIndexVar="rowIndex" paginator="true" 
+                                 currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}" 
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                 rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" rows="10" editable="true">
+                        <p:column headerText="Feature">
+                            <h:outputText value="#{systemConfig.configKey}"/>
+                        </p:column>
+
+                        <p:column headerText="Valor">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{systemConfig.configValue}"/></f:facet>
+                                <f:facet name="input"><p:inputText value="#{systemConfig.configValue}" required="true" requiredMessage="Valor es requerido"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Editar" style="width:60px;text-align: center">
+                            <p:rowEditor/>
+                        </p:column>
+
+                        <p:column style="width:60px;text-align: center">
+                            <p:commandLink value="Guardar" actionListener="#{auditorAdminMB.saveSystemConfigAction(rowIndex)}" styleClass="lnks"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+                <p:tab id="reportetab" title="Reportes - Estadisticas" rendered="#{auditorAdminMB.showtabreportes}">
+                    <f:facet name="title">
+                        <p:graphicImage value="./resources/images/estadistica-icon.png" width="20" height="20"/>
+                        <p:spacer width="10" height="10"/>
+                        <h:outputText value="Reportes - Estadisticas"/>
+                    </f:facet>
+                    <ui:include src="reportetab.xhtml"/>
+                </p:tab>
+                
+                <p:tab id="auditoriastab" title="Auditorias Designadas" rendered="#{auditorAdminMB.showtabauditorias}">
+                    <f:facet name="title">
+                        <p:graphicImage value="./resources/images/estadistica-icon.png" width="20" height="20"/>
+                        <p:spacer width="10" height="10"/>
+                        <h:outputText value="Auditorias Designadas"/>
+                    </f:facet>
+                    <ui:include src="auditoriastab.xhtml"/>
+                </p:tab>
+            </p:tabView>
+
+            <!-- Dialogo reseteo de clave persona natural -->
+            <p:confirmDialog id="resetpasspndlg" showEffect="fade" hideEffect="fade" widgetVar="resetpasspn" header="Confirmar restablecimiento de clave"
+                             message="Se restablecerá la clave del Auditor, ¿Esta de acuerdo?">
+                <p:commandButton value="Si" actionListener="#{auditorAdminMB.resetPasswordNatural()}" update="form01:growl" icon="ui-icon-check" oncomplete="PF('resetpasspn').hide()"/>
+                <p:commandButton value="No" icon="ui-icon-close" oncomplete="PF('resetpasspn').hide()"/>
+            </p:confirmDialog>
+
+            <!-- Dialogo reseteo de clave persona juridica -->
+            <p:confirmDialog id="resetpasspjdlg" showEffect="fade" hideEffect="fade" widgetVar="resetpasspj" header="Confirmar restablecimiento de clave"
+                             message="Se restablecerá la clave del Auditor, ¿Esta de acuerdo?">
+                <p:commandButton value="Si" actionListener="#{auditorAdminMB.resetPasswordJuridica()}" update="form01:growl" icon="ui-icon-check" oncomplete="PF('resetpasspj').hide()"/>
+                <p:commandButton value="No" icon="ui-icon-close" oncomplete="PF('resetpasspj').hide()"/>
+            </p:confirmDialog>
+
+            <!-- Confirmacion eliminar auditor persona natural-->
+            <p:confirmDialog id="deleteauditorpndlg" showEffect="fade" hideEffect="fade" widgetVar="deleteauditorpn" header="Confirmar eliminar auditor"
+                             message="¿Esta seguro de eliminar el auditor?">
+                <p:commandButton value="Si" actionListener="#{auditorAdminMB.deleteActionNatural()}" update="form01:growl form01:tabulador:pndt" icon="ui-icon-check" oncomplete="PF('deleteauditorpn').hide()"/>
+                <p:commandButton value="No" icon="ui-icon-close" oncomplete="PF('deleteauditorpn').hide()"/>
+            </p:confirmDialog>
+
+            <!-- Confirmacion eliminar auditor persona juridica-->
+            <p:confirmDialog id="deleteauditorpjdlg" showEffect="fade" hideEffect="fade" widgetVar="deleteauditorpj" header="Confirmar eliminar auditor"
+                             message="¿Esta seguro de eliminar el auditor?">
+                <p:commandButton value="Si" actionListener="#{auditorAdminMB.deleteActionJuridica()}" update="form01:growl form01:tabulador:pjdt" icon="ui-icon-check" oncomplete="PF('deleteauditorpj').hide()"/>
+                <p:commandButton value="No" icon="ui-icon-close" oncomplete="PF('deleteauditorpj').hide()"/>
+            </p:confirmDialog>
+        </h:form>
+        
+        <p:dialog id="catalogedit" widgetVar="cat" header="Editar catálogo" modal="true" resizable="false" showEffect="clip" hideEffect="clip" width="700" height="250">
+            <h:form id="formcat">
+                <br/>
+                <p:commandButton value="Nuevo" icon="ui-icon-plus" update=":newcatdlg" oncomplete="PF('newcat').show()"/>
+                <br/>
+
+                <p:dataTable id="catalogdt" var="catalogo" value="#{catalogMB.catalogos}" styleClass="texto_tabla_listas_admin"
+                                 emptyMessage="Aun no se han agregado catalogos" rowIndexVar="rowIndex" paginator="true" 
+                                 currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}" 
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                 rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" rows="10" editable="true">
+                    <p:column headerText="Id" style="width:60px;text-align: center">
+                        <h:outputText value="#{catalogo.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{catalogo.nombre}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Nemonico">
+                        <h:outputText value="#{catalogo.nemonico}"/>
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{catalogo.descripcion}"/>
+                    </p:column>
+
+                    <p:column headerText="Tipo">
+                        <h:outputText value="#{catalogo.tipoCatalogo.nombre}"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="newtipocatdlg" widgetVar="newtipocat" header="Nuevo tipo catálogo" modal="true" 
+                  resizable="false" showEffect="clip" hideEffect="clip" width="360" height="210">
+            <h:form id="form02">
+                <br/>
+                <p:inputText id="nombretipocat" value="#{catalogMB.tipoCatalogo.nombre}" size="30" required="true" requiredMessage="Debe ingresar un nombre"/>
+                <p:watermark for="nombretipocat" value="Nombre nuevo tipo catálogo"/>
+                <p:message id="msgnombretip" for="nombretipocat" display="tooltip"/>
+                <br/>
+                <br/>
+                
+                <p:inputText id="nemonicotipocat" value="#{catalogMB.tipoCatalogo.nemonico}" size="30" required="true" requiredMessage="Debe ingresar un nemonico"/>
+                <p:watermark for="nemonicotipocat" value="Nemonico nuevo tipo catálogo"/>
+                <p:message id="msgnemonicotip" for="nemonicotipocat" display="tooltip"/>
+                <br/>
+                <br/>
+                
+                <p:inputText id="newtipocattxt" value="#{catalogMB.tipoCatalogo.descripcion}" size="30" required="true" requiredMessage="Debe ingresar una descripción"/>
+                <p:watermark for="newtipocattxt" value="Descripción nuevo tipo catálogo"/>
+                <p:message id="msgtip" for="newtipocattxt" display="tooltip"/>
+                <br/>
+                <br/>
+
+                <p:commandButton value="Guardar" actionListener="#{catalogMB.saveTipoCatalogo()}" oncomplete="PF('newtipocat').hide()"
+                                 update=":form01:tabulador:tipocatalogdt :form01:growl"/>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="newcatdlg" widgetVar="newcat" header="Nuevo catálogo" modal="true" 
+                  resizable="false" showEffect="clip" hideEffect="clip" width="350" height="210">
+            <h:form id="form03">
+            <br/>
+
+            <p:inputText id="newcatname" value="#{catalogMB.catalogo.nombre}" size="30" required="true" requiredMessage="Debe ingresar un nombre"/>
+            <p:watermark for="newcatname" value="Nombre nuevo catálogo"/>
+            <p:message id="msgtip02" for="newcatname" display="tooltip"/>
+            <br/>
+            <br/>
+            
+            <p:inputText id="newcatnemonic" value="#{catalogMB.catalogo.nemonico}" size="30" required="true" requiredMessage="Debe ingresar un nemonico"/>
+            <p:watermark for="newcatnemonic" value="Nemonico nuevo catálogo"/>
+            <p:message id="msgtip04" for="newcatnemonic" display="tooltip"/>
+            <br/>
+            <br/>
+            
+            <p:inputText id="newcatdescription" value="#{catalogMB.catalogo.descripcion}" size="30" required="true" requiredMessage="Debe ingresar una descripción"/>
+            <p:watermark for="newcatdescription" value="Descripción nuevo catálogo"/>
+            <p:message id="msgtip03" for="newcatdescription" display="tooltip"/>
+            <br/>
+            <br/>
+
+            <p:commandButton value="Guardar" actionListener="#{catalogMB.saveCatalogo()}" oncomplete="PF('newcat').hide()"
+                             update=":form01:growl :formcat"/>
+
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>
+
+

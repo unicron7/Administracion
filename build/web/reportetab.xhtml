@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <h:outputStylesheet name="css/c3.css"/>
+    <h:outputStylesheet name="css/grafica.css"/>
+    
+    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    
+    <h:outputScript library="js" name="app.js"/>
+    <h:outputScript library="js" name="c3.js"/>
+    
+    
+    <p:panelGrid columns="2" styleClass="panelgridtabs">
+        <p:graphicImage width="50" height="50" value="./resources/images/estadistica-icon.png" style="alignment-adjust: central"/>
+        <p:button value="Descargar reporte" href="#{auditorAdminMB.reporteAuditores}" icon="ui-icon-arrowthickstop-1-s"/>
+    </p:panelGrid>
+    
+    <p:panelGrid columns="1" styleClass="panelgrid-graphic">
+        <h1><p:outputLabel value="Auditores Técnicos Mineros"/></h1>
+        <p:panelGrid columns="2" styleClass="panelgrid-graphic">
+            <p:commandButton update="@none" onclick="addChart('#{graficaDatosMB.keys()}','#{graficaDatosMB.values()}','bar')" value="Gráfica de barras"/>
+            <p:commandButton onclick="addChart('#{graficaDatosMB.keys()}','#{graficaDatosMB.values()}','pie')" value="Gráfica de pastel"/>
+        </p:panelGrid>
+        
+        <p:panelGrid columns="1" styleClass="panelgrid-graphic">
+            <div id="chart" class="grafica"></div>
+        </p:panelGrid>
+
+    </p:panelGrid>
+</ui:composition>
