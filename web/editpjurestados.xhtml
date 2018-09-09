@@ -26,7 +26,7 @@
                             </f:facet>
                             
                             <p:outputLabel value="Estado actual:"/>
-                            <p:outputLabel id="estadoactualauditor" style="font-weight: bold" value="#{catalogMB.obtenerCatalogoPorId(auditorAdminMB.personaJuridica.estado).nombre}"/>
+                            <p:outputLabel id="estadoactualauditor" style="font-weight: bold" value="#{auditorAdminMB.personaJuridica.estado.nombre}"/>
                             <p:commandLink value="Cambiar estado" actionListener="#{auditorAdminMB.editarEstadoAuditor()}" update=":modestadodlg" oncomplete="PF('modestado').show()" immediate="true" styleClass="lnksestado"/>
                             
                             <p:spacer/>
@@ -141,8 +141,13 @@
                                 </h:panelGroup>
                             </f:facet>
                             <p:outputLabel value="Provincia:"></p:outputLabel>
-                            <p:selectOneMenu  id="somProvincia" required="true" value="#{auditorAdminMB.personaJuridica.direccion.provincia}" disabled="true" >
-                                <f:selectItems value="#{auditorAdminMB.provincias}"/>
+                            <p:selectOneMenu  id="somProvincia" required="true" value="#{auditorAdminMB.personaJuridica.direccion.provincia}" disabled="true"
+                                              converter="#{localidadConverter}">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{auditorAdminMB.provincias}"
+                                       var="l"
+                                       itemLabel="#{l.nombre}"
+                                       itemValue="#{l}"/>
                             </p:selectOneMenu>
 
                             <p:outputLabel value="Ciudad:"></p:outputLabel>
@@ -253,12 +258,17 @@
             </h:form>
             
             <p:dialog id="modestadodlg" widgetVar="modestado" header="Cambiar estado" modal="true" 
-                      resizable="false" showEffect="clip" hideEffect="clip" width="250" height="100">
+                      resizable="false" showEffect="clip" hideEffect="clip" width="300" height="150">
                 <h:form>
                     <br/>
                     &nbsp;
-                    <p:selectOneMenu id="somEstadoAuditor" value="#{auditorAdminMB.selectedEstadoValue}" label="Tipo auditor" validatorMessage="Seleccione un valor">
-                        <f:selectItems value="#{catalogMB.estadosAuditor}"/>
+                    <p:selectOneMenu id="somEstadoAuditor" value="#{auditorAdminMB.selectedEstadoValue}" label="Estado auditor" validatorMessage="Seleccione un valor"
+                                     converter="#{catalogoConverter}">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{catalogMB.estadosAuditor}"
+                                       var="estado"
+                                       itemLabel="#{estado.nombre}"
+                                       itemValue="#{estado}"/>
                     </p:selectOneMenu>
                     <br/>
                     &nbsp;
@@ -274,8 +284,13 @@
                 <h:form>
                     <br/>
                     &nbsp;
-                    <p:selectOneMenu id="somTipoAuditor" value="#{auditorAdminMB.selectedCatalogValue}" label="Tipo auditor" validatorMessage="Seleccione un valor">
-                        <f:selectItems value="#{catalogMB.tiposAuditor}"/>
+                    <p:selectOneMenu id="somTipoAuditor" value="#{auditorAdminMB.selectedCatalogValue}" label="Tipo auditor" validatorMessage="Seleccione un valor"
+                                     converter="#{catalogoConverter}">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{catalogMB.tiposAuditor}"
+                                        var="tipoauditor"
+                                        itemLabel="#{tipoauditor.nombre}"
+                                        itemValue="#{tipoauditor}"/>
                     </p:selectOneMenu>
                     <br/>
                     <br/>

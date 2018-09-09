@@ -37,7 +37,7 @@
         </p:column>
         
         <p:column headerText="Tipo de Auditoria" sortBy="#{auditoria.tipoAuditoria}">
-            <h:outputText value="#{catalogMB.obtenerCatalogoPorId(auditoria.tipoAuditoria).nombre}"/>
+            <h:outputText value="#{auditoria.tipoAuditoria.nombre}"/>
         </p:column>
         
         <p:column headerText="Fecha asignación" sortBy="#{auditoria.fechaDeAsignacion}" style="width:100px;text-align: center">
